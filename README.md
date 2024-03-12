@@ -44,7 +44,7 @@ downloadUrl 属性为语雀文档的url
 
 ### 支持作者
 - 请作者吃鸡腿
-  ![杰哥](http://150.58.sn.cn:20015/eqAdmin/upload/files/65f0635d60b2cb90182a14e0.jpg?baseURI=/www/javaapp/upload/)
+  ![杰哥](./img/01.jpg)
 - 微信: worker_680
 - 公众号：黑白灰680
 
