@@ -1,0 +1,19 @@
+server:
+  port: 8080
+yueque:
+  # 谷歌浏览器驱动绝对路径
+  chromedriver: /Users/huzhenjie/Desktop/data/macs/chromedriver/122/chromedriver
+  # 谷歌浏览器绝对路径  如果不填 则取系统的默认谷歌浏览器，请确保谷歌浏览器已正确安装
+  chrome:
+  # 语雀下载的基础路径地址
+  yuequeDowmloaderBasePath: /Users/huzhenjie/Desktop/data/macs/yueque/
+  # 下载右侧文档的间隔时间 单位毫秒 默认为5秒 如果报错，请调大该时间。
+  sleepTime: 3000
+  # 语雀左侧标题每次滚动的具体像素 默认 100px
+  movePx: 36
+  # 滚动后需要休眠多少秒
+  scrollSleepTime: 1000
+  # 循环次数 由于无法判断是否已经到最后一个标题 因此需要指定循环次数
+  loop: 10
+  downloadUrl: https://www.yuque.com/a00yangguang/au36hm/ml0vy9
+

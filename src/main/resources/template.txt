@@ -1,0 +1,63 @@
+
+<link rel="stylesheet" href="https://gw.alipayobjects.com/os/chair-script/skylark/deps.5e129bb2.chunk.css" />
+<link rel="stylesheet" href="https://gw.alipayobjects.com/os/chair-script/skylark/larkui.2ec1e1a7.chunk.css" />
+<link rel="stylesheet" href="https://gw.alipayobjects.com/os/chair-script/skylark/pc.43d6d656.css" />
+<style type="text/css">
+  .yq-blank-detection.module-error {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .yq-blank-detection.module-error h3 {
+    font-size: 28px;
+    font-weight: normal;
+    color: #262626;
+    margin-bottom: 16px;
+  }
+
+  .yq-blank-detection.module-error .error-message {
+    color: #8c8c8c;
+    font-size: 14px;
+  }
+
+  .yq-blank-detection.module-error .error-icon-1 {
+    max-width: 45px;
+    position: relative;
+    left: 80px;
+    top: -60px;
+  }
+
+  .yq-blank-detection.module-error .error-icon-2 {
+    max-width: 54px;
+    object-fit: contain;
+    position: relative;
+    left: -300px;
+    top: 50px;
+  }
+
+  .yq-blank-detection.module-error .unknown-error {
+    width: 100%;
+    max-width: 1080px;
+    margin-top: 50px;
+  }
+
+  .yq-blank-detection.module-error button {
+    margin-top: 24px;
+    color: white;
+    background-color: rgb(83, 182, 114);
+  }
+
+  @media screen and (max-width: 768px) {
+    .yq-blank-detection.module-error .unknown-error {
+      max-width: 100%;
+    }
+    .yq-blank-detection.module-error .error-icon-2 {
+      display: none;
+    }
+  }
+</style>
