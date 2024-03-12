@@ -43,8 +43,6 @@ downloadUrl 属性为语雀文档的url
 - src/main/resources/templates/document.html
 
 ### 支持作者
-- 请作者吃鸡腿
-  ![杰哥](./img/01.jpg)
 - 微信: worker_680
 - 公众号：黑白灰680
 
