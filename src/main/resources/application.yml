@@ -7,8 +7,8 @@ yueque:
   chrome:
   # 语雀下载的基础路径地址
   yuequeDowmloaderBasePath: /Users/huzhenjie/Desktop/data/macs/yueque/
-  # 下载右侧文档的间隔时间 单位毫秒 默认为5秒 如果报错，请调大该时间。
-  sleepTime: 5000
+  # 下载右侧文档的间隔时间 单位毫秒 默认为10秒 如果报错，请调大该时间。 休眠时间和电脑网速有关。如无法下载所有的标题文档，请调大该时间
+  sleepTime: 10000
   # 语雀左侧标题每次滚动的具体像素 默认 100px
   movePx: 36
   # 滚动后需要休眠多少秒
