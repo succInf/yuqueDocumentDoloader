@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author huzhenjie
@@ -50,10 +51,13 @@ public class YuQueManager {
         log.info("开始下载语雀文档");
 
         WebDriver driver = chromeManager.getDriver();
+        driver.manage().window().maximize();
         driver.get(url);
         //ReaderLayout-module_bookName_
         String title = getTitle(driver);
         log.info("获取的标题信息为{}",title);
+
+
         Boolean createDirFlag = false;
         //根据标题创建目录。
         if(!StrUtil.isBlankOrUndefined(title)){
@@ -98,15 +102,14 @@ public class YuQueManager {
         WebElement larkVirtualTree = antTabsTabpaneActive.findElement(By.className("lark-virtual-tree"));
         //主div  第一层 代表是第一季标题。
         WebElement div =  larkVirtualTree.findElement(By.tagName("div"));
-        List<WebElement> webElements = new ArrayList<>();
+        //List<WebElement> webElements = new ArrayList<>();
        // WebElement needScrollElement = getNeedScrollElement(div);
         Long viewHeight = getViewHeight(driver,div);
-        Boolean vv = exec(title,driver,webElements,div);
+        Boolean vv = exec(title,driver,div);
         while (vv){
             loopIndex++;
-           scrollPx(driver,moveElement,viewHeight.intValue());
-           //needScrollElement = getNeedScrollElement(div);
-            vv= exec(title,driver,webElements,div);
+            scrollSlowPx(driver,moveElement,viewHeight.intValue());
+            vv= exec(title,driver,div);
             if(loopIndex>info.getLoop()){
                 vv = false;
             }
@@ -122,11 +125,10 @@ public class YuQueManager {
         return temps.get(size-1);
     }
 
-    private Boolean exec(String title,WebDriver driver,List<WebElement> webElements,WebElement element){
+    private Boolean exec(String title,WebDriver driver,WebElement element){
         List<WebElement> temps = element.findElements(By.tagName("a"));
         //在这需要执行点击操作。
         parseWebElements(title,driver,temps);
-        webElements.addAll(temps);
         return true;
     }
 
@@ -158,7 +160,13 @@ public class YuQueManager {
                 if(!FileUtil.exist(imgPath)){
                     FileUtil.mkdir(imgPath);
                 }
-                WebElement el = driver.findElement(By.className("article-content")).findElement(By.className("yuque-doc-content"));
+                //获取到文章元素
+                WebElement el = driver.findElement(By.className("article-content")).findElement(By.className("ne-viewer-body"));
+                //将该元素滚动到可视高度
+                Long height = getViewHeight(driver,el);
+                scrollSlowPx(driver,el,height.intValue());
+
+
                 String html = el.getAttribute("innerHTML");
                 List<WebElement> imgs =  el.findElements(By.tagName("img"));
                 for(WebElement img:imgs){
@@ -179,11 +187,10 @@ public class YuQueManager {
                 String content = el.getText();
                 FileUtil.writeString(content,path+File.separator+leftTitle+".txt","UTF-8");
                 log.info("写入文件成功{}",leftTitle);
+                moveElement = wel;
             }catch (Exception e){
                 log.error("元素报错 {}",e.getMessage(),e);
                 continue;
-            }finally {
-                moveElement = wel;
             }
         }
 
@@ -206,17 +213,34 @@ public class YuQueManager {
     }
 
     private void scrollPx(WebDriver driver, WebElement element,Integer px){
-        try{
             String scrollToPixel = "window.scrollBy(0, "+px+");";
             //滚动到元素顶部
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].scrollIntoView(true);", element);
             js.executeScript(scrollToPixel);
-            Thread.sleep(info.getScrollSleepTime());
-        }catch (Exception e){
-            log.error("休眠失败");
-        }
         log.info("滚动了{}像素",px);
+
+    }
+
+    private void scrollSlowPx(WebDriver driver, WebElement element,Integer px)  {
+            String scrollToPixel = null;
+            //缓慢滑动到指定位置。
+            //滚动到元素顶部
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].scrollIntoView(true);", element);
+            int spacing = px/20;
+            int temp = spacing;
+            for(int i =0;i<20;i++){
+                scrollToPixel = "window.scrollBy(0, "+temp+");";
+                temp = temp + spacing;
+                js.executeScript(scrollToPixel);
+                try{
+                    TimeUnit.MILLISECONDS.sleep(100);
+                }catch (Exception e){
+                    log.error("休眠异常 {}",e.getMessage(),e);
+                }
+            }
+        log.info("滚动了{}像素",temp);
 
     }
 
@@ -228,6 +252,18 @@ public class YuQueManager {
             return false;
         }
         return true;
+    }
+
+    private void removeStyles(WebDriver driver){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        var jj = "var styles = document.getElementsByTagName('style');\n" +
+                " \n" +
+                "// 循环遍历并移除\n" +
+                "for (var i = styles.length - 1; i >= 0; i--) {\n" +
+                "    var style = styles[i];\n" +
+                "    style.parentNode.removeChild(style);\n" +
+                "}";
+        js.executeScript(jj);
     }
 
 

@@ -21,13 +21,30 @@
         .cm-line{text-indent: 1em;white-space: pre;}
         .cm-content{padding: .5rem;}
         .ne-list-symbol{font-size: 8px}
+        table {
+            width: 100%;
+            border: 1px solid black;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        td {
+            height: 32px;
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: center;
+        }
+        tbody tr:nth-child(even) {
+            background-color: antiquewhite;
+        }
     </style>
 </head>
 
 <body>
 <div >
     <article>
-        #(content??)
+        <div class="ne-viewer-body">
+            #(content??)
+        </div>
     </article>
 </div>
 </body>
