@@ -134,7 +134,6 @@ public class YuQueManager {
 
            for(WebElement wel:webElements){
             try{
-
                 String leftTitle = wel.getText();
                 log.info("执行点击操作");
                 wel.click();
@@ -150,7 +149,6 @@ public class YuQueManager {
                     titleMap.put(leftTitle,leftTitle);
                 }
                 documentIndex++;
-
                 var path = info.getYuequeDowmloaderBasePath() + title + "/" +documentIndex+"-"+leftTitle;
                 log.info("创建目录成功{}",path);
                 if(!FileUtil.exist(path)){
@@ -176,15 +174,13 @@ public class YuQueManager {
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("content",html);
                 html = TemplateRenderUtil.renderStr(data,"document.html");
-
-
-
                 FileUtil.writeString(html,path+File.separator+leftTitle+".html","UTF-8");
                 //图片处理。
                 String content = el.getText();
                 FileUtil.writeString(content,path+File.separator+leftTitle+".txt","UTF-8");
                 log.info("写入文件成功{}",leftTitle);
             }catch (Exception e){
+                log.error("元素报错 {}",e.getMessage(),e);
                 continue;
             }finally {
                 moveElement = wel;
@@ -223,5 +219,16 @@ public class YuQueManager {
         log.info("滚动了{}像素",px);
 
     }
+
+    private Boolean webPageIsComplete(WebDriver driver){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        String readyState = (String) js.executeScript("return document.readyState;");
+        log.info("网页加载状态 {}",readyState);
+        if(readyState.equals("complete")){
+            return false;
+        }
+        return true;
+    }
+
 
 }
