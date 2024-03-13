@@ -8,12 +8,12 @@ yueque:
   # 语雀下载的基础路径地址
   yuequeDowmloaderBasePath: /Users/huzhenjie/Desktop/data/macs/yueque/
   # 下载右侧文档的间隔时间 单位毫秒 默认为5秒 如果报错，请调大该时间。
-  sleepTime: 3000
+  sleepTime: 5000
   # 语雀左侧标题每次滚动的具体像素 默认 100px
   movePx: 36
   # 滚动后需要休眠多少秒
   scrollSleepTime: 1000
   # 循环次数 由于无法判断是否已经到最后一个标题 因此需要指定循环次数
   loop: 10
-  downloadUrl: https://www.yuque.com/a00yangguang/au36hm/ml0vy9
+  downloadUrl: https://www.yuque.com/starblues/spring-brick-3.0.0
 

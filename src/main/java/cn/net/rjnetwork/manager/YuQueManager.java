@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpUtil;
 import cn.net.rjnetwork.config.Info;
+import cn.net.rjnetwork.util.HtmlDealUtil;
 import cn.net.rjnetwork.util.TemplateRenderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -170,9 +171,14 @@ public class YuQueManager {
                     //将html对应的图片替换掉。
                     html = html.replace(src,"./imgs"+File.separator+fileName);
                 }
+                html = html.replace("<div class=\"ne-viewer-header\"><button type=\"button\" class=\"ne-ui-exit-max-view-btn\">返回文档</button></div>","");
+                html = HtmlDealUtil.clearDisplayNone(html);
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("content",html);
                 html = TemplateRenderUtil.renderStr(data,"document.html");
+
+
+
                 FileUtil.writeString(html,path+File.separator+leftTitle+".html","UTF-8");
                 //图片处理。
                 String content = el.getText();
