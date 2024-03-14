@@ -16,4 +16,6 @@ yueque:
   # 循环次数 由于无法判断是否已经到最后一个标题 因此需要指定循环次数
   loop: 10
   downloadUrl: https://www.yuque.com/starblues/spring-brick-3.0.0
+  # https://www.yuque.com/starblues/spring-brick-3.0.0/vlffby
+  # https://www.yuque.com/starblues/spring-brick-3.0.0
 

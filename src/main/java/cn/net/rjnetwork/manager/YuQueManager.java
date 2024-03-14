@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpUtil;
 import cn.net.rjnetwork.config.Info;
 import cn.net.rjnetwork.util.HtmlDealUtil;
+import cn.net.rjnetwork.util.ScrollUtil;
 import cn.net.rjnetwork.util.TemplateRenderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -102,20 +103,16 @@ public class YuQueManager {
         WebElement larkVirtualTree = antTabsTabpaneActive.findElement(By.className("lark-virtual-tree"));
         //主div  第一层 代表是第一季标题。
         WebElement div =  larkVirtualTree.findElement(By.tagName("div"));
-        //List<WebElement> webElements = new ArrayList<>();
-       // WebElement needScrollElement = getNeedScrollElement(div);
-        Long viewHeight = getViewHeight(driver,div);
+        Long viewHeight = ScrollUtil.getViewHeight(driver,div);
         Boolean vv = exec(title,driver,div);
         while (vv){
             loopIndex++;
-            scrollSlowPx(driver,moveElement,viewHeight.intValue());
+            ScrollUtil.scrollSlowPx(driver,moveElement,viewHeight.intValue());
             vv= exec(title,driver,div);
             if(loopIndex>info.getLoop()){
                 vv = false;
             }
         }
-
-       // parseWebElements(title,driver,webElements,i);
     }
 
 
@@ -133,13 +130,11 @@ public class YuQueManager {
     }
 
     private void parseWebElements(String title,WebDriver driver,List<WebElement> webElements){
-
            for(WebElement wel:webElements){
             try{
                 String leftTitle = wel.getText();
                 log.info("执行点击操作");
                 wel.click();
-                log.info("开始休眠{}秒",info.getSleepTime()/1000);
                 Thread.sleep(info.getSleepTime());
                 if(StrUtil.isBlankOrUndefined(leftTitle)){
                     log.info("获取标题为空，则本次跳过");
@@ -163,10 +158,10 @@ public class YuQueManager {
                 //获取到文章元素
                 WebElement el = driver.findElement(By.className("article-content")).findElement(By.className("ne-viewer-body"));
                 //将该元素滚动到可视高度
-                Long height = getViewHeight(driver,el);
-                scrollSlowPx(driver,el,height.intValue());
+                Long height = ScrollUtil.getViewHeight(driver,el);
+                ScrollUtil.scrollSlowPx(driver,el,height.intValue(),1);
 
-
+                //scrollTop(driver,el);
                 String html = el.getAttribute("innerHTML");
                 List<WebElement> imgs =  el.findElements(By.tagName("img"));
                 for(WebElement img:imgs){
@@ -177,7 +172,6 @@ public class YuQueManager {
                     //将html对应的图片替换掉。
                     html = html.replace(src,"./imgs"+File.separator+fileName);
                 }
-                html = html.replace("<div class=\"ne-viewer-header\"><button type=\"button\" class=\"ne-ui-exit-max-view-btn\">返回文档</button></div>","");
                 html = HtmlDealUtil.clearDisplayNone(html);
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("content",html);
@@ -195,76 +189,5 @@ public class YuQueManager {
         }
 
     }
-
-    private void scrollToBottom(WebDriver driver, WebElement element) {
-        // 确保元素是可滚动的
-        String scrollIntoViewCommand = "arguments[0].scrollIntoView(true);";
-        ((JavascriptExecutor) driver).executeScript(scrollIntoViewCommand, element);
-
-        // 滚动到底部
-        String scrollToBottomCommand = "window.scrollBy(0, document.body.scrollHeight);";
-        ((JavascriptExecutor) driver).executeScript(scrollToBottomCommand);
-    }
-
-    private Long getViewHeight(WebDriver driver, WebElement element){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        Long elementHeight = (Long) js.executeScript("return arguments[0].clientHeight;", element);
-        return elementHeight;
-    }
-
-    private void scrollPx(WebDriver driver, WebElement element,Integer px){
-            String scrollToPixel = "window.scrollBy(0, "+px+");";
-            //滚动到元素顶部
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("arguments[0].scrollIntoView(true);", element);
-            js.executeScript(scrollToPixel);
-        log.info("滚动了{}像素",px);
-
-    }
-
-    private void scrollSlowPx(WebDriver driver, WebElement element,Integer px)  {
-            String scrollToPixel = null;
-            //缓慢滑动到指定位置。
-            //滚动到元素顶部
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("arguments[0].scrollIntoView(true);", element);
-            int spacing = px/20;
-            int temp = spacing;
-            for(int i =0;i<20;i++){
-                scrollToPixel = "window.scrollBy(0, "+temp+");";
-                temp = temp + spacing;
-                js.executeScript(scrollToPixel);
-                try{
-                    TimeUnit.MILLISECONDS.sleep(100);
-                }catch (Exception e){
-                    log.error("休眠异常 {}",e.getMessage(),e);
-                }
-            }
-        log.info("滚动了{}像素",temp);
-
-    }
-
-    private Boolean webPageIsComplete(WebDriver driver){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        String readyState = (String) js.executeScript("return document.readyState;");
-        log.info("网页加载状态 {}",readyState);
-        if(readyState.equals("complete")){
-            return false;
-        }
-        return true;
-    }
-
-    private void removeStyles(WebDriver driver){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        var jj = "var styles = document.getElementsByTagName('style');\n" +
-                " \n" +
-                "// 循环遍历并移除\n" +
-                "for (var i = styles.length - 1; i >= 0; i--) {\n" +
-                "    var style = styles[i];\n" +
-                "    style.parentNode.removeChild(style);\n" +
-                "}";
-        js.executeScript(jj);
-    }
-
 
 }
