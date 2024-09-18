@@ -15,6 +15,9 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.Command;
+import org.openqa.selenium.devtools.DevTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -58,6 +62,7 @@ public class YuQueManager {
 
         WebDriver driver = chromeManager.getDriver();
         driver.manage().window().maximize();
+        //设置浏览器指纹特征，防止反爬机制
         driver.get(url);
         if(!StrUtil.isBlankOrUndefined(cookies)){
             //cookies不为空 开始设置cookies。
