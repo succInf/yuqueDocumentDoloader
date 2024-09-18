@@ -8,7 +8,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 /**
  * @author huzhenjie
@@ -37,6 +40,11 @@ public class ChromeManager {
             throw new RuntimeException("谷歌驱动不存在，请检查配置");
         }
         System.setProperty("webdriver.chrome.driver",info.getChromedriver());
+        //设置浏览器指纹信息。
+        this.chromeOptions.setExperimentalOption("useAutomationExtension",false);
+        this.chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        this.chromeOptions.addArguments("disable-blink-features");
+        this.chromeOptions.addArguments("disable-blink-features=AutomationControlled");
         //添加参数 防止 403
         this.chromeOptions.addArguments("--remote-allow-origins=*");
         this.chromeOptions.addArguments("--no-sandbox");

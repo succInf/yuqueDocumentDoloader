@@ -11,10 +11,12 @@ import cn.net.rjnetwork.util.ScrollUtil;
 import cn.net.rjnetwork.util.TemplateRenderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -48,12 +50,32 @@ public class YuQueManager {
 
     WebElement moveElement = null;
 
+    @Value("${yueque.cookies}")
+    private String cookies;
+
     public void download(String url) throws InterruptedException {
         log.info("开始下载语雀文档");
 
         WebDriver driver = chromeManager.getDriver();
         driver.manage().window().maximize();
         driver.get(url);
+        if(!StrUtil.isBlankOrUndefined(cookies)){
+            //cookies不为空 开始设置cookies。
+            String[] ckes = cookies.split(";");
+            for(String ck : ckes){
+                ck = ck.trim();
+                String[] aa = ck.split("=");
+                if(aa.length == 2){
+                    Cookie cookie = new Cookie(aa[0], aa[1]);
+                    driver.manage().addCookie(cookie);
+                }
+            }
+
+
+        }
+
+//
+//        driver.manage().addCookie(cookie);
         //ReaderLayout-module_bookName_
         String title = getTitle(driver);
         log.info("获取的标题信息为{}",title);

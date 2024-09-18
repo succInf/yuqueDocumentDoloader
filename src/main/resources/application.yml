@@ -2,7 +2,8 @@ server:
   port: 8080
 yueque:
   # 谷歌浏览器驱动绝对路径
-  chromedriver: /Users/huzhenjie/Desktop/data/macs/chromedriver/122/chromedriver
+  cookies: receive-cookie-deprecation=1; aliyungf_tc=a9c10301a559c44e24d2aeaf9ae3aedac0287b94d14ecff41aec330df0199176; acw_tc=ac11000117266399940915252e473ec52cf4964e614c4ae23fcab6e8a77455; yuque_ctoken=sxW9MazPfBjQyMx-Xwk2cybt; lang=zh-cn; _yuque_session=n_FzpQWqYiQEgGAKM6Y9BZTeJegEEwPhOZZcNL8KMj1VrwdqeCtM0JBBZrPvnjkljZKg4k-KjFK1_IvirBXkpw==; _uab_collina=172663999646308384941771; tfstk=gRTsMRVDEKLe2Trw2qhFVvWkHiQjTKgzCS1vZIUaMNQTH-dRL5rNb1zXAKphbOpV7-gXdNIDbtWNhZODFXkrz4RMsZbtUYuPXIk3jaVTDteVvkCVkfXTVRRMsZVheFnHaCqbCpcwDZpAJMCfGZeOXKCdv9fcMRCYWXOdK9CYB1COJ9CRG1EvHZhB99fvrCrlGV661X4cksWazaROdrUvWqj1FNr4orfh_GTv69O61e11fTIUrvqDPQd9rsTmwo6XghpNtKgSdwL6CFIClqah7QtpCMtshysHvQYAAHD7qQA9C3IJW2GphpdkqNLtnPWMDBLALFh4lTKyZw1Huv4OhHKv7Gb0BA1B5QTXcgybzTsv1oNCqr1CUXGQmomCHdDpDoI2fGCh16hIOR9cX6fCtXGQmAsOt16oOXwsd; current_theme=default
+  chromedriver: /Users/huzhenjie/Desktop/data/data/chrome/chromedriver
   # 谷歌浏览器绝对路径  如果不填 则取系统的默认谷歌浏览器，请确保谷歌浏览器已正确安装
   chrome:
   # 语雀下载的基础路径地址
