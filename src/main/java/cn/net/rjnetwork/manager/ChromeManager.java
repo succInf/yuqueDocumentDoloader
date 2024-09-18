@@ -48,6 +48,15 @@ public class ChromeManager {
         //添加参数 防止 403
         chromeOptions.addArguments("--remote-allow-origins=*");
         chromeOptions.addArguments("--no-sandbox");
+        //添加无头模式
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--disable-infobars");
+        chromeOptions.addArguments("--window-size=1920,1080");
+        chromeOptions.addArguments("--start-maximized");
+        chromeOptions.addArguments("--disable-extensions");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--disable-browser-side-navigation");
+
         this.driver = new ChromeDriver(chromeOptions);
         try{
             //https://www.browserscan.net/zh 浏览器指纹检测网站。
