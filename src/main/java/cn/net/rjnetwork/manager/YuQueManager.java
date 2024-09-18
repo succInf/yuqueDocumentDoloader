@@ -3,7 +3,7 @@ package cn.net.rjnetwork.manager;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.digest.MD5;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.http.HttpUtil;
 import cn.net.rjnetwork.config.Info;
 import cn.net.rjnetwork.util.HtmlDealUtil;
@@ -12,23 +12,16 @@ import cn.net.rjnetwork.util.TemplateRenderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.Command;
-import org.openqa.selenium.devtools.DevTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author huzhenjie
@@ -42,16 +35,13 @@ public class YuQueManager {
 
     @Autowired
     ChromeManager chromeManager;
-
+    private static ConcurrentHashMap<String, String> endMap = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<String, String> titleMap = new ConcurrentHashMap<>();
 
     @Autowired
     Info info;
 
     private  Integer documentIndex = 0;
-
-    private Integer loopIndex = 0;
-
     WebElement moveElement = null;
 
     @Value("${yueque.cookies}")
@@ -78,22 +68,20 @@ public class YuQueManager {
 
 
         }
-
-//
-//        driver.manage().addCookie(cookie);
-        //ReaderLayout-module_bookName_
         String title = getTitle(driver);
         log.info("获取的标题信息为{}",title);
-
-
         Boolean createDirFlag = false;
         //根据标题创建目录。
         if(!StrUtil.isBlankOrUndefined(title)){
             createDirFlag = createDir(title);
         }
-        getDirectoryTree(driver,title);
+        if(createDirFlag){
+            getDirectoryTree(driver,title);
+        }
+        //先关闭 在退出。
+        log.info("执行完毕，准备退出...");
         driver.close();
-
+        driver.quit();
     }
 
     /**
@@ -128,17 +116,15 @@ public class YuQueManager {
         WebElement webElement =  driver.findElement(By.className("ant-tabs-content-holder"));
         WebElement antTabsTabpaneActive = webElement.findElement(By.className("ant-tabs-tabpane-active"));
         WebElement larkVirtualTree = antTabsTabpaneActive.findElement(By.className("lark-virtual-tree"));
-        //主div  第一层 代表是第一季标题。
+        //主div  第一层 代表是第一级标题。
         WebElement div =  larkVirtualTree.findElement(By.tagName("div"));
         Long viewHeight = ScrollUtil.getViewHeight(driver,div);
-        Boolean vv = exec(title,driver,div);
+        boolean vv = exec(title,driver,div);
+        //如何判断结束的标志。
         while (vv){
-            loopIndex++;
+            //将元素滚动到底部，确保所有元素均可见。
             ScrollUtil.scrollSlowPx(driver,moveElement,viewHeight.intValue());
             vv= exec(title,driver,div);
-            if(loopIndex>info.getLoop()){
-                vv = false;
-            }
         }
     }
 
@@ -150,10 +136,36 @@ public class YuQueManager {
     }
 
     private Boolean exec(String title,WebDriver driver,WebElement element){
+        //获取左侧已显示的所有a标签元素信息。如果取到的a标签为空则代表 已经结束。
         List<WebElement> temps = element.findElements(By.tagName("a"));
-        //在这需要执行点击操作。
+        if(temps==null || temps.isEmpty()){
+            return false;
+        }
+        if(isEnd(temps)){
+            return false;
+        }
+        //在这需要执行点击操作。循环a标签并进行点击操作，从而获取右侧内容。
+        //这里也需要判断是否已经爬取完毕。
         parseWebElements(title,driver,temps);
         return true;
+    }
+
+
+
+    private boolean isEnd( List<WebElement> temps){
+        StringBuffer sb = new StringBuffer();
+        temps.stream().peek((k)->{
+            sb.append(k.getText());
+        }).collect(Collectors.toList());
+        //endMap.put()
+       String md5 =  SecureUtil.md5(sb.toString());
+       log.info("md5为{}",md5);
+       if(endMap.containsKey(md5)){
+           return true;
+       }else{
+           endMap.put(md5,sb.toString());
+           return false;
+       }
     }
 
     private void parseWebElements(String title,WebDriver driver,List<WebElement> webElements){
@@ -172,12 +184,15 @@ public class YuQueManager {
                 }else{
                     titleMap.put(leftTitle,leftTitle);
                 }
+                //代表序号。
                 documentIndex++;
+                //组装本地文件所在地址。
                 var path = info.getYuequeDowmloaderBasePath() + title + "/" +documentIndex+"-"+leftTitle;
                 log.info("创建目录成功{}",path);
                 if(!FileUtil.exist(path)){
                     FileUtil.mkdir(path);
                 }
+                //组装图片本地地址。
                 var imgPath = path + File.separator + "imgs";
                 if(!FileUtil.exist(imgPath)){
                     FileUtil.mkdir(imgPath);
@@ -210,8 +225,7 @@ public class YuQueManager {
                 log.info("写入文件成功{}",leftTitle);
                 moveElement = wel;
             }catch (Exception e){
-                log.error("元素报错 {}",e.getMessage(),e);
-                continue;
+                log.error("已执行到最后一项，即将关闭...");
             }
         }
 
