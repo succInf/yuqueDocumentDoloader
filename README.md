@@ -27,6 +27,10 @@ cd 项目
 downloadUrl 属性为语雀文档的url
 然后运行main方法即可
 ### 项目结构
+- img 
+- webs
+- winPackage
+- macPackage
 - src/main/java
 - src/main/java/cn/net/rjnetwork/YuqueDocumentDownloaderApplication.java
 - src/main/java/cn/net/rjnetwork/config
